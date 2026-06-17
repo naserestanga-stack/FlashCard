@@ -1,0 +1,172 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards de Estudio</title>
+    <style>
+        /* Estilos Generales */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Contenedor de la Tarjeta */
+        .flashcard-container {
+            width: 350px;
+            height: 250px;
+            perspective: 1000px; /* Necesario para el efecto 3D */
+            cursor: pointer;
+        }
+
+        /* La Tarjeta en sí */
+        .flashcard {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 15px;
+        }
+
+        /* Clase que se añade con JavaScript para girar */
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        /* Caras de la tarjeta (Frente y Vuelta) */
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden; /* Esconde la cara opuesta al girar */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 15px;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        /* Cara Frontal */
+        .card-front {
+            background-color: #ffffff;
+            color: #2c3e50;
+            border: 2px solid #3498db;
+        }
+
+        .card-front h2 {
+            color: #3498db;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        /* Cara Trasera */
+        .card-back {
+            background-color: #2ecc71;
+            color: white;
+            transform: rotateY(180deg); /* Volteada por defecto */
+        }
+
+        /* Controles (Botón Siguiente) */
+        .controls {
+            margin-top: 25px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Mis Flashcards</h1>
+
+    <div class="flashcard-container" onclick="flipCard()">
+        <div class="flashcard" id="card">
+            <div class="card-face card-front">
+                <h2>Pregunta</h2>
+                <p id="question-text">¿Qué significa HTML?</p>
+            </div>
+            <div class="card-face card-back">
+                <h2>Respuesta</h2>
+                <p id="answer-text">HyperText Markup Language (Lenguaje de Marcado de Hipertexto).</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="nextCard(event)">Siguiente Tarjeta</button>
+    </div>
+
+    <script>
+        // Banco de preguntas y respuestas
+        const deck = [
+            { q: "¿Qué significa HTML?", a: "HyperText Markup Language." },
+            { q: "¿Para qué sirve CSS?", a: "Para darle estilo y diseño a las páginas web." },
+            { q: "¿Qué es JavaScript?", a: "Un lenguaje de programación que permite interactividad en la web." },
+            { q: "¿Qué etiqueta se usa para un enlace en HTML?", a: "La etiqueta &lt;a&gt; con el atributo 'href'." }
+        ];
+
+        let currentIndex = 0;
+        const card = document.getElementById('card');
+        const questionText = document.getElementById('question-text');
+        const answerText = document.getElementById('answer-text');
+
+        // Función para girar la tarjeta
+        function flipCard() {
+            card.classList.toggle('flipped');
+        }
+
+        // Función para pasar a la siguiente tarjeta
+        function nextCard(event) {
+            // Evita que el click se propague y gire la tarjeta por accidente
+            event.stopPropagation(); 
+            
+            // Si la tarjeta está volteada, primero la regresamos al frente
+            if (card.classList.contains('flipped')) {
+                card.classList.remove('flipped');
+                // Esperamos a que termine la animación de regreso (300ms) para cambiar el texto
+                setTimeout(changeContent, 300);
+            } else {
+                changeContent();
+            }
+        }
+
+        // Cambia el texto de la tarjeta
+        function changeContent() {
+            currentIndex = (currentIndex + 1) % deck.length;
+            questionText.innerHTML = deck[currentIndex].q;
+            answerText.innerHTML = deck[currentIndex].a;
+        }
+    </script>
+
+</body>
+</html>
